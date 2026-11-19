@@ -1,0 +1,26 @@
+spring:
+  application:
+    name: studyroom
+
+  # backend/.env 파일이 있으면 읽어서 DB_URL 같은 값을 채움 (파일이 없어도 오류 없음)
+  # 같은 이름의 OS 환경 변수가 있으면 그 값이 우선함
+  config:
+    import: optional:file:.env[.properties]
+
+  datasource:
+    url: ${DB_URL:jdbc:mysql://localhost:3306/studyroom?serverTimezone=Asia/Seoul&characterEncoding=UTF-8}
+    username: ${DB_USERNAME:studyroom}
+    password: ${DB_PASSWORD}   # 기본값 없음: .env나 환경 변수에 꼭 있어야 함
+    driver-class-name: com.mysql.cj.jdbc.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: update   # 개발 중에만 사용. 엔티티를 보고 테이블을 자동으로 만들거나 고침
+    open-in-view: false
+    properties:
+      hibernate:
+        format_sql: true
+    show-sql: true
+
+server:
+  port: 8080

@@ -1,0 +1,28 @@
+# 비밀 정보 (DB 비밀번호 등)
+.env
+.env.*
+!.env.example
+
+# OS / IDE
+.DS_Store
+*.swp
+*.swo
+.idea/
+*.iml
+.vscode/
+
+# Claude Code 개인 설정
+.claude/settings.local.json
+
+# backend (Gradle)
+backend/.gradle/
+backend/build/
+backend/out/
+backend/bin/
+
+# frontend (Vite)
+frontend/node_modules/
+frontend/dist/
+
+# Claude Code 프로젝트 메모 (로컬 전용)
+CLAUDE.md
