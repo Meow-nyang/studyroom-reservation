@@ -1,0 +1,12 @@
+.health {
+  padding: 2rem;
+  text-align: center;
+}
+
+.health-status {
+  font-size: 1.5rem;
+}
+
+.health-error {
+  color: #d33;
+}
