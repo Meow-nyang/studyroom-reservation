@@ -22,7 +22,7 @@ public class RoomService {
         if (!studyCafeRepository.existsById(cafeId)) {
             throw new NotFoundException("지점을 찾을 수 없습니다. id=" + cafeId);
         }
-        return roomRepository.findByStudyCafeIdAndStatus(cafeId, RoomStatus.ACTIVE).stream()
+        return roomRepository.findByStudyCafeIdAndStatusOrderByIdAsc(cafeId, RoomStatus.ACTIVE).stream()
                 .map(RoomSummaryResponse::from)
                 .toList();
     }

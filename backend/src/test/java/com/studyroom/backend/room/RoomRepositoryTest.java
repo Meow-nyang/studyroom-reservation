@@ -34,8 +34,9 @@ class RoomRepositoryTest {
         roomRepository.save(Room.builder().studyCafe(cafe).name("X룸").capacity(4).pricePerHour(8000).build());
         roomRepository.save(Room.builder().studyCafe(cafe).name("Y룸").capacity(6).pricePerHour(12000).build());
 
-        List<Room> rooms = roomRepository.findByStudyCafeIdAndStatus(cafe.getId(), RoomStatus.ACTIVE);
+        List<Room> rooms = roomRepository.findByStudyCafeIdAndStatusOrderByIdAsc(cafe.getId(), RoomStatus.ACTIVE);
 
-        assertThat(rooms).extracting(Room::getName).containsExactlyInAnyOrder("X룸", "Y룸");
+        // 저장한 순서(id 오름차순) 그대로 나와야 함
+        assertThat(rooms).extracting(Room::getName).containsExactly("X룸", "Y룸");
     }
 }

@@ -17,7 +17,7 @@ public class StudyCafeService {
     private final StudyCafeRepository studyCafeRepository;
 
     public List<StudyCafeResponse> findAll() {
-        return studyCafeRepository.findAll().stream()
+        return studyCafeRepository.findAllByOrderByIdAsc().stream()
                 .map(StudyCafeResponse::from)
                 .toList();
     }
