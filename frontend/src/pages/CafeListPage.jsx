@@ -1,7 +1,6 @@
 import { Link } from 'react-router'
 import { Status } from '../components/Status.jsx'
 import { useFetch } from '../hooks/useFetch.js'
-import { formatTime } from '../utils/format.js'
 
 export function CafeListPage() {
   const { data: cafes, error, loading } = useFetch('/api/cafes')
@@ -18,7 +17,7 @@ export function CafeListPage() {
               <strong className="card-title">{cafe.name}</strong>
               <span>{cafe.address}</span>
               <span className="card-meta">
-                {formatTime(cafe.openTime)} ~ {formatTime(cafe.closeTime)}
+                {cafe.openTime} ~ {cafe.closeTime}
               </span>
             </Link>
           </li>

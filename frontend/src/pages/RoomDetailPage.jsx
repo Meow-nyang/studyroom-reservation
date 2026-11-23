@@ -1,7 +1,7 @@
 import { Link, useParams } from 'react-router'
 import { Status } from '../components/Status.jsx'
 import { useFetch } from '../hooks/useFetch.js'
-import { formatPrice, formatTime } from '../utils/format.js'
+import { formatPrice } from '../utils/format.js'
 
 export function RoomDetailPage() {
   const { roomId } = useParams()
@@ -21,7 +21,7 @@ export function RoomDetailPage() {
         <dt>가격</dt>
         <dd>시간당 {formatPrice(room.pricePerHour)}</dd>
         <dt>운영 시간</dt>
-        <dd>{formatTime(room.openTime)} ~ {formatTime(room.closeTime)}</dd>
+        <dd>{room.openTime} ~ {room.closeTime}</dd>
         <dt>설명</dt>
         <dd>{room.description || '-'}</dd>
       </dl>

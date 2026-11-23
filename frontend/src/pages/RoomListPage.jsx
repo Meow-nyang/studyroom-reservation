@@ -1,7 +1,7 @@
 import { Link, useParams } from 'react-router'
 import { Status } from '../components/Status.jsx'
 import { useFetch } from '../hooks/useFetch.js'
-import { formatPrice, formatTime } from '../utils/format.js'
+import { formatPrice } from '../utils/format.js'
 
 export function RoomListPage() {
   const { cafeId } = useParams()
@@ -17,7 +17,7 @@ export function RoomListPage() {
       <Link to="/" className="back-link">← 지점 목록</Link>
       <h2>{cafe.data.name}</h2>
       <p className="page-meta">
-        {cafe.data.address} · {formatTime(cafe.data.openTime)} ~ {formatTime(cafe.data.closeTime)}
+        {cafe.data.address} · {cafe.data.openTime} ~ {cafe.data.closeTime}
       </p>
 
       {rooms.data.length === 0 ? (
