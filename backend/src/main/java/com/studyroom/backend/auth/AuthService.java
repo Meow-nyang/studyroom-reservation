@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.studyroom.backend.auth.jwt.JwtProvider;
+import com.studyroom.backend.auth.refresh.RefreshTokenService;
 import com.studyroom.backend.common.exception.ConflictException;
 import com.studyroom.backend.common.exception.UnauthorizedException;
 import com.studyroom.backend.member.Member;
@@ -26,6 +27,7 @@ public class AuthService {
     private final MemberRepository memberRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtProvider jwtProvider;
+    private final RefreshTokenService refreshTokenService;
 
     public MemberResponse signup(SignupRequest request) {
         String email = Member.normalizeEmail(request.email());
@@ -49,14 +51,36 @@ public class AuthService {
         }
     }
 
-    @Transactional(readOnly = true)
-    public TokenResponse login(LoginRequest request) {
+    public IssuedTokens login(LoginRequest request) {
         // 이메일이 없는 경우와 비밀번호가 틀린 경우를 같은 문구로 응답한다.
         // 다르게 응답하면 "이 이메일은 가입돼 있다"는 정보가 새어 나간다.
         Member member = memberRepository.findByEmail(Member.normalizeEmail(request.email()))
                 .filter(m -> passwordEncoder.matches(request.password(), m.getPassword()))
                 .orElseThrow(() -> new UnauthorizedException(LOGIN_FAILED_MESSAGE));
 
-        return new TokenResponse(jwtProvider.createAccessToken(member.getId(), member.getRole()));
+        return new IssuedTokens(
+                jwtProvider.createAccessToken(member.getId(), member.getRole()),
+                refreshTokenService.issue(member));
+    }
+
+    public IssuedTokens refresh(String rawRefreshToken) {
+        if (rawRefreshToken == null || rawRefreshToken.isBlank()) {
+            throw new UnauthorizedException("다시 로그인해 주세요.");
+        }
+        RefreshTokenService.Rotated rotated = refreshTokenService.rotate(rawRefreshToken);
+        Member member = rotated.member();
+        return new IssuedTokens(
+                jwtProvider.createAccessToken(member.getId(), member.getRole()),
+                rotated.refreshToken());
+    }
+
+    public void logout(String rawRefreshToken) {
+        if (rawRefreshToken != null && !rawRefreshToken.isBlank()) {
+            refreshTokenService.revoke(rawRefreshToken);
+        }
+    }
+
+    // 컨트롤러로 넘기는 두 토큰. access token은 응답 본문으로, refresh token은 쿠키로 나간다.
+    public record IssuedTokens(String accessToken, String refreshToken) {
     }
 }
