@@ -6,3 +6,7 @@ spring:
   jpa:
     hibernate:
       ddl-auto: create   # 테스트를 돌릴 때마다 엔티티 기준으로 테이블을 새로 만듦
+
+jwt:
+  # 테스트 전용 고정 키. 실제 서비스 키와는 아무 관계 없음
+  secret: test-only-secret-key-that-is-long-enough-1234567890

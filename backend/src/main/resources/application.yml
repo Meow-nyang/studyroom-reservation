@@ -29,3 +29,9 @@ spring:
 
 server:
   port: 8080
+
+jwt:
+  secret: ${JWT_SECRET}   # 기본값 없음: .env나 환경 변수에 꼭 있어야 함
+  access-token-validity: 30m
+  refresh-token-validity: 7d
+  cookie-secure: false    # 로컬은 HTTP라 false. 운영(HTTPS)에서는 true

@@ -5,7 +5,9 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.studyroom.backend.auth.jwt.JwtProvider;
 import com.studyroom.backend.common.exception.ConflictException;
+import com.studyroom.backend.common.exception.UnauthorizedException;
 import com.studyroom.backend.member.Member;
 import com.studyroom.backend.member.MemberRepository;
 import com.studyroom.backend.member.MemberResponse;
@@ -19,9 +21,11 @@ import lombok.RequiredArgsConstructor;
 public class AuthService {
 
     private static final String DUPLICATE_EMAIL_MESSAGE = "이미 가입된 이메일이에요.";
+    private static final String LOGIN_FAILED_MESSAGE = "이메일 또는 비밀번호가 올바르지 않아요.";
 
     private final MemberRepository memberRepository;
     private final PasswordEncoder passwordEncoder;
+    private final JwtProvider jwtProvider;
 
     public MemberResponse signup(SignupRequest request) {
         String email = Member.normalizeEmail(request.email());
@@ -43,5 +47,16 @@ public class AuthService {
         } catch (DataIntegrityViolationException e) {
             throw new ConflictException(DUPLICATE_EMAIL_MESSAGE);
         }
+    }
+
+    @Transactional(readOnly = true)
+    public TokenResponse login(LoginRequest request) {
+        // 이메일이 없는 경우와 비밀번호가 틀린 경우를 같은 문구로 응답한다.
+        // 다르게 응답하면 "이 이메일은 가입돼 있다"는 정보가 새어 나간다.
+        Member member = memberRepository.findByEmail(Member.normalizeEmail(request.email()))
+                .filter(m -> passwordEncoder.matches(request.password(), m.getPassword()))
+                .orElseThrow(() -> new UnauthorizedException(LOGIN_FAILED_MESSAGE));
+
+        return new TokenResponse(jwtProvider.createAccessToken(member.getId(), member.getRole()));
     }
 }
