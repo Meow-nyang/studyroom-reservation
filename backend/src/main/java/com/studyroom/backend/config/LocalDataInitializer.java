@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
+import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 
 import com.studyroom.backend.cafe.StudyCafe;
@@ -15,8 +16,10 @@ import com.studyroom.backend.room.RoomRepository;
 import lombok.RequiredArgsConstructor;
 
 /**
- * 개발용 초기 데이터. 지점이 하나도 없을 때만 넣어서, 앱을 여러 번 켜도 중복으로 쌓이지 않는다.
+ * 개발용 초기 데이터. local 프로필에서만 실행된다.
+ * 지점이 하나도 없을 때만 넣어서, 앱을 여러 번 켜도 중복으로 쌓이지 않는다.
  */
+@Profile("local")
 @Component
 @RequiredArgsConstructor
 public class LocalDataInitializer implements ApplicationRunner {

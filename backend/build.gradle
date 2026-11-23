@@ -34,4 +34,6 @@ dependencies {
 
 tasks.named('test') {
 	useJUnitPlatform()
+	// 모든 테스트를 test 프로필로 실행 → application-test.yml의 테스트 DB를 사용
+	systemProperty 'spring.profiles.active', 'test'
 }

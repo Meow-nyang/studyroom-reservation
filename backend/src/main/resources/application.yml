@@ -2,6 +2,11 @@ spring:
   application:
     name: studyroom
 
+  # 프로필을 따로 지정하지 않으면 local로 실행 (개발용 초기 데이터가 들어감)
+  # 운영에서는 prod 같은 다른 프로필을 지정하므로 local은 꺼짐
+  profiles:
+    default: local
+
   # backend/.env 파일이 있으면 읽어서 DB_URL 같은 값을 채움 (파일이 없어도 오류 없음)
   # 같은 이름의 OS 환경 변수가 있으면 그 값이 우선함
   config:
