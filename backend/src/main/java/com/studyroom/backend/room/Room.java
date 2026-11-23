@@ -5,6 +5,8 @@ import org.hibernate.type.SqlTypes;
 
 import com.studyroom.backend.cafe.StudyCafe;
 import com.studyroom.backend.common.BaseTimeEntity;
+import com.studyroom.backend.common.DomainValidator;
+import com.studyroom.backend.common.exception.InvalidValueException;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -55,6 +57,15 @@ public class Room extends BaseTimeEntity {
 
     @Builder
     private Room(StudyCafe studyCafe, String name, int capacity, int pricePerHour, String description) {
+        DomainValidator.requireNonNull(studyCafe, "지점");
+        DomainValidator.requireText(name, "방 이름");
+        if (capacity < 1) {
+            throw new InvalidValueException("최대 인원은 1명 이상이어야 합니다.");
+        }
+        if (pricePerHour <= 0) {
+            throw new InvalidValueException("시간당 가격은 0원보다 커야 합니다.");
+        }
+
         this.studyCafe = studyCafe;
         this.name = name;
         this.capacity = capacity;
