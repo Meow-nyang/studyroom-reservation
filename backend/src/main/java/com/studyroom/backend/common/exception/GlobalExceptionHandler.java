@@ -3,6 +3,9 @@ package com.studyroom.backend.common.exception;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.validation.FieldError;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
@@ -21,6 +24,22 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(BusinessException.class)
     public ResponseEntity<ErrorResponse> handleBusiness(BusinessException e) {
         return respond(e.getStatus(), e.getMessage());
+    }
+
+    // 요청 본문의 @Valid 검사 실패. 첫 번째로 걸린 항목의 메시지를 보여 준다.
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public ResponseEntity<ErrorResponse> handleValidation(MethodArgumentNotValidException e) {
+        String message = e.getBindingResult().getFieldErrors().stream()
+                .findFirst()
+                .map(FieldError::getDefaultMessage)
+                .orElse("요청 값이 올바르지 않습니다.");
+        return respond(HttpStatus.BAD_REQUEST, message);
+    }
+
+    // 요청 본문이 JSON이 아니거나 비어 있음
+    @ExceptionHandler(HttpMessageNotReadableException.class)
+    public ResponseEntity<ErrorResponse> handleUnreadable(HttpMessageNotReadableException e) {
+        return respond(HttpStatus.BAD_REQUEST, "요청 본문을 읽을 수 없습니다.");
     }
 
     // 주소의 값 타입이 틀림. 예: /api/rooms/abc
