@@ -1,21 +1,24 @@
 import { BrowserRouter, Link, Route, Routes } from 'react-router'
 import { CafeListPage } from './pages/CafeListPage.jsx'
+import { NotFoundPage } from './pages/NotFoundPage.jsx'
 import { RoomDetailPage } from './pages/RoomDetailPage.jsx'
 import { RoomListPage } from './pages/RoomListPage.jsx'
-import './App.css'
+import styles from './App.module.css'
 
 function App() {
   return (
     <BrowserRouter>
-      <header className="header">
-        <Link to="/" className="logo">스터디룸 예약</Link>
+      <header className={styles.header}>
+        <div className={styles.inner}>
+          <Link to="/" className={styles.logo}>스터디룸</Link>
+        </div>
       </header>
-      <main className="main">
+      <main className={styles.inner}>
         <Routes>
           <Route path="/" element={<CafeListPage />} />
           <Route path="/cafes/:cafeId" element={<RoomListPage />} />
           <Route path="/rooms/:roomId" element={<RoomDetailPage />} />
-          <Route path="*" element={<p className="status">없는 페이지입니다.</p>} />
+          <Route path="*" element={<NotFoundPage />} />
         </Routes>
       </main>
     </BrowserRouter>

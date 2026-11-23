@@ -1,0 +1,35 @@
+.hours {
+  margin-top: var(--space-4);
+}
+
+.hours > p {
+  margin-bottom: var(--space-2);
+}
+
+/* 방 이름 | 인원 | 가격 을 한 줄에. 좁은 화면에서는 이름 아래로 내려간다 */
+.room {
+  display: grid;
+  grid-template-columns: 1fr auto auto;
+  align-items: baseline;
+  gap: var(--space-1) var(--space-4);
+}
+
+.name {
+  font-size: var(--text-lg);
+  font-weight: 600;
+}
+
+.price {
+  font-variant-numeric: tabular-nums;
+  text-align: right;
+}
+
+@media (max-width: 480px) {
+  .room {
+    grid-template-columns: 1fr auto;
+  }
+
+  .name {
+    grid-column: 1 / -1;
+  }
+}

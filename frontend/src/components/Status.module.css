@@ -1,0 +1,8 @@
+.status {
+  padding: var(--space-5) 0;
+  color: var(--pencil);
+}
+
+.error {
+  color: var(--danger);
+}

@@ -1,0 +1,22 @@
+/* 인원과 가격을 나란히. 숫자가 주인공이라 값을 크게, 이름은 작게 */
+.facts {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-3) var(--space-5);
+  margin-top: var(--space-4);
+}
+
+.facts dt {
+  font-size: var(--text-sm);
+  color: var(--pencil);
+}
+
+.facts dd {
+  font-size: var(--text-xl);
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+
+.note {
+  margin-bottom: var(--space-3);
+}

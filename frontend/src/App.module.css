@@ -1,0 +1,21 @@
+.header {
+  border-bottom: 1px solid var(--rule);
+}
+
+/* 헤더와 본문이 같은 폭과 같은 왼쪽 선을 쓴다 */
+.inner {
+  max-width: var(--content-width);
+  margin: 0 auto;
+  padding: var(--space-3);
+}
+
+main.inner {
+  padding-top: var(--space-5);
+  padding-bottom: var(--space-6);
+}
+
+.logo {
+  font-size: var(--text-lg);
+  font-weight: 600;
+  text-decoration: none;
+}
