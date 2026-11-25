@@ -1,12 +1,15 @@
 package com.studyroom.backend.reservation;
 
 import java.time.Clock;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.List;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.studyroom.backend.common.exception.ConflictException;
+import com.studyroom.backend.common.exception.InvalidValueException;
 import com.studyroom.backend.common.exception.NotFoundException;
 import com.studyroom.backend.common.exception.UnauthorizedException;
 import com.studyroom.backend.member.Member;
@@ -31,9 +34,7 @@ public class ReservationService {
     public ReservationResponse create(Long memberId, CreateReservationRequest request) {
         Member member = memberRepository.findById(memberId)
                 .orElseThrow(() -> new UnauthorizedException("다시 로그인해 주세요."));
-        Room room = roomRepository.findById(request.roomId())
-                .filter(r -> r.getStatus() == RoomStatus.ACTIVE)
-                .orElseThrow(() -> new NotFoundException("방을 찾을 수 없습니다. id=" + request.roomId()));
+        Room room = findActiveRoom(request.roomId());
 
         Reservation reservation = Reservation.create(member, room, request.date(), request.startTime(),
                 request.hours(), LocalDateTime.now(clock));
@@ -48,5 +49,27 @@ public class ReservationService {
         }
 
         return ReservationResponse.from(reservationRepository.save(reservation));
+    }
+
+    public AvailabilityResponse findAvailability(Long roomId, LocalDate date) {
+        Room room = findActiveRoom(roomId);
+
+        LocalDate today = LocalDate.now(clock);
+        if (date.isBefore(today) || date.isAfter(today.plusDays(Reservation.BOOKABLE_DAYS))) {
+            throw new InvalidValueException("오늘부터 " + Reservation.BOOKABLE_DAYS + "일 뒤까지만 조회할 수 있어요.");
+        }
+
+        // 그날 00:00부터 다음 날 00:00 전까지 걸친 확정 예약
+        List<Reservation> reservations = reservationRepository.findOverlapping(
+                roomId, date.atStartOfDay(), date.plusDays(1).atStartOfDay(), ReservationStatus.CONFIRMED);
+
+        return AvailabilityResponse.of(date, room.getStudyCafe(), reservations, LocalDateTime.now(clock));
+    }
+
+    // 운영을 멈춘 방(INACTIVE)은 방 조회 API와 똑같이 없는 방으로 본다
+    private Room findActiveRoom(Long roomId) {
+        return roomRepository.findById(roomId)
+                .filter(r -> r.getStatus() == RoomStatus.ACTIVE)
+                .orElseThrow(() -> new NotFoundException("방을 찾을 수 없습니다. id=" + roomId));
     }
 }
