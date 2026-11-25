@@ -10,6 +10,7 @@ import org.hibernate.type.SqlTypes;
 import com.studyroom.backend.cafe.StudyCafe;
 import com.studyroom.backend.common.BaseTimeEntity;
 import com.studyroom.backend.common.DomainValidator;
+import com.studyroom.backend.common.exception.ConflictException;
 import com.studyroom.backend.common.exception.InvalidValueException;
 import com.studyroom.backend.member.Member;
 import com.studyroom.backend.room.Room;
@@ -125,5 +126,24 @@ public class Reservation extends BaseTimeEntity {
         }
 
         return new Reservation(member, room, startAt, endAt, room.getPricePerHour() * hours);
+    }
+
+    // member는 LAZY라 아직 DB에서 안 가져온 상태(프록시)일 수 있다. 그래도 id는 이미 알고 있어서 추가 조회가 없다.
+    public boolean isOwnedBy(Long memberId) {
+        return member.getId().equals(memberId);
+    }
+
+    /**
+     * 예약을 취소한다. 데이터를 지우지 않고 상태만 바꿔서 기록을 남긴다.
+     */
+    public void cancel(LocalDateTime now) {
+        if (status == ReservationStatus.CANCELED) {
+            throw new ConflictException("이미 취소된 예약이에요.");
+        }
+        if (!startAt.isAfter(now)) {
+            throw new ConflictException("이미 시작된 예약은 취소할 수 없어요.");
+        }
+        this.status = ReservationStatus.CANCELED;
+        this.canceledAt = now;
     }
 }

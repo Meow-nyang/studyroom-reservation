@@ -12,6 +12,7 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 
 import com.studyroom.backend.cafe.StudyCafe;
+import com.studyroom.backend.common.exception.ConflictException;
 import com.studyroom.backend.common.exception.InvalidValueException;
 import com.studyroom.backend.member.Member;
 import com.studyroom.backend.member.Role;
@@ -139,6 +140,36 @@ class ReservationTest {
     void allowLaterSlotToday() {
         assertThat(create(TODAY, LocalTime.of(15, 0), 1).getStartAt())
                 .isEqualTo(LocalDateTime.of(2026, 11, 25, 15, 0));
+    }
+
+    @Test
+    void cancelBeforeStart() {
+        Reservation reservation = create(TOMORROW, LocalTime.of(10, 0), 2);
+
+        reservation.cancel(NOW);
+
+        assertThat(reservation.getStatus()).isEqualTo(ReservationStatus.CANCELED);
+        assertThat(reservation.getCanceledAt()).isEqualTo(NOW);
+    }
+
+    @Test
+    void rejectCancelTwice() {
+        Reservation reservation = create(TOMORROW, LocalTime.of(10, 0), 2);
+        reservation.cancel(NOW);
+
+        assertThatThrownBy(() -> reservation.cancel(NOW))
+                .isInstanceOf(ConflictException.class)
+                .hasMessage("이미 취소된 예약이에요.");
+    }
+
+    // 내일 10:00 예약을 내일 10:00(시작한 순간)에 취소하려고 하면 안 된다
+    @Test
+    void rejectCancelAfterStart() {
+        Reservation reservation = create(TOMORROW, LocalTime.of(10, 0), 2);
+
+        assertThatThrownBy(() -> reservation.cancel(TOMORROW.atTime(10, 0)))
+                .isInstanceOf(ConflictException.class)
+                .hasMessage("이미 시작된 예약은 취소할 수 없어요.");
     }
 
     private Reservation create(LocalDate date, LocalTime startTime, int hours) {

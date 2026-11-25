@@ -41,4 +41,19 @@ public interface ReservationRepository extends JpaRepository<Reservation, Long> 
             @Param("startAt") LocalDateTime startAt,
             @Param("endAt") LocalDateTime endAt,
             @Param("status") ReservationStatus status);
+
+    /**
+     * 회원의 예약 전체를 시작 시각 최신순으로 가져온다.
+     * 응답에 방 이름과 지점 이름이 들어가므로 join fetch로 방·지점을 한 번의 SQL에 같이 가져온다.
+     * (없으면 예약 10개를 보여 줄 때 방·지점을 가져오는 SQL이 따로 더 나간다: N+1 문제)
+     */
+    @Query("""
+            select r
+            from Reservation r
+            join fetch r.room room
+            join fetch room.studyCafe
+            where r.member.id = :memberId
+            order by r.startAt desc, r.id desc
+            """)
+    List<Reservation> findAllOfMember(@Param("memberId") Long memberId);
 }

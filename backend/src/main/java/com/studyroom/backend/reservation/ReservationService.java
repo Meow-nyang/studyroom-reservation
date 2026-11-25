@@ -66,6 +66,24 @@ public class ReservationService {
         return AvailabilityResponse.of(date, room.getStudyCafe(), reservations, LocalDateTime.now(clock));
     }
 
+    public List<ReservationResponse> findMine(Long memberId) {
+        return reservationRepository.findAllOfMember(memberId).stream()
+                .map(ReservationResponse::from)
+                .toList();
+    }
+
+    @Transactional
+    public ReservationResponse cancel(Long memberId, Long reservationId) {
+        // 남의 예약은 403이 아니라 404로 응답한다. 403이면 "그 번호의 예약이 있다"는 사실을 알려 주게 된다.
+        Reservation reservation = reservationRepository.findById(reservationId)
+                .filter(r -> r.isOwnedBy(memberId))
+                .orElseThrow(() -> new NotFoundException("예약을 찾을 수 없습니다. id=" + reservationId));
+
+        // 상태만 바꾸면 트랜잭션이 끝날 때 JPA가 바뀐 값을 UPDATE 해 준다(변경 감지). save를 따로 부르지 않는다.
+        reservation.cancel(LocalDateTime.now(clock));
+        return ReservationResponse.from(reservation);
+    }
+
     // 운영을 멈춘 방(INACTIVE)은 방 조회 API와 똑같이 없는 방으로 본다
     private Room findActiveRoom(Long roomId) {
         return roomRepository.findById(roomId)
