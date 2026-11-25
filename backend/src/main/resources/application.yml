@@ -20,7 +20,9 @@ spring:
 
   jpa:
     hibernate:
-      ddl-auto: update   # 개발 중에만 사용. 엔티티를 보고 테이블을 자동으로 만들거나 고침
+      # 테이블은 Flyway(db/migration의 SQL 파일)가 만든다.
+      # JPA는 엔티티와 실제 테이블이 맞는지 시작할 때 확인만 하고, 다르면 서버가 뜨지 않는다.
+      ddl-auto: validate
     open-in-view: false
     properties:
       hibernate:

@@ -22,6 +22,9 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-validation'
 	implementation 'org.springframework.boot:spring-boot-starter-webmvc'
 	implementation 'org.springframework.boot:spring-boot-starter-security'
+	// DB 테이블을 SQL 파일(src/main/resources/db/migration)로 순서대로 만들고 고침
+	implementation 'org.springframework.boot:spring-boot-starter-flyway'
+	implementation 'org.flywaydb:flyway-mysql'
 	// JWT 만들기·검증. JSON 처리는 Gson 모듈 사용 (jjwt-jackson은 Jackson 2라서 Boot 4의 Jackson 3와 섞임)
 	implementation 'io.jsonwebtoken:jjwt-api:0.13.0'
 	runtimeOnly 'io.jsonwebtoken:jjwt-impl:0.13.0'
