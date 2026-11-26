@@ -1,5 +1,5 @@
 import { Link, useParams } from 'react-router'
-import { HourGrid } from '../components/HourGrid.jsx'
+import { BookingSection } from '../components/BookingSection.jsx'
 import { Status } from '../components/Status.jsx'
 import { useFetch } from '../hooks/useFetch.js'
 import page from '../styles/page.module.css'
@@ -29,13 +29,7 @@ export function RoomDetailPage() {
         </div>
       </dl>
 
-      <div className={page.section}>
-        <h2 className={page.sectionTitle}>
-          운영 시간 <span className={page.hours}>{room.openTime}–{room.closeTime}</span>
-        </h2>
-        <p className={`${page.muted} ${styles.note}`}>칸 하나가 1시간이에요. 예약은 1시간 단위로 해요.</p>
-        <HourGrid openTime={room.openTime} closeTime={room.closeTime} />
-      </div>
+      <BookingSection room={room} />
     </section>
   )
 }

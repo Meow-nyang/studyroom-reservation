@@ -1,0 +1,51 @@
+/* 날짜 15개를 한 줄로. 화면보다 길면 이 줄 안에서만 옆으로 넘긴다(페이지 전체가 옆으로 밀리지 않게) */
+.strip {
+  display: flex;
+  gap: 4px;
+  max-width: 100%;
+  margin-bottom: var(--space-4);
+  padding: 0 0 var(--space-2);
+  overflow-x: auto;
+  list-style: none;
+}
+
+.day {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  min-width: 56px;
+  padding: var(--space-2);
+  border: 0;
+  border-radius: 0;
+  background: #fff;
+  box-shadow: inset 0 0 0 1px var(--rule);
+  color: var(--ink);
+  font: inherit;
+  line-height: 1.2;
+  cursor: pointer;
+}
+
+.day:hover {
+  background: var(--paper-dim);
+}
+
+.weekday {
+  font-size: var(--text-sm);
+  color: var(--pencil);
+}
+
+.date {
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+
+.selected,
+.selected:hover {
+  background: var(--ink);
+  box-shadow: none;
+  color: var(--paper);
+}
+
+.selected .weekday {
+  color: var(--paper);
+}

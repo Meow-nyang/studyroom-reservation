@@ -1,0 +1,44 @@
+/* 칸 폭을 고정하고 줄을 넘기면 다음 줄로 */
+.grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  padding: 0;
+  list-style: none;
+}
+
+.cell {
+  width: 56px;
+  padding: var(--space-2) var(--space-2) var(--space-4);
+  border: 0;
+  border-radius: 0;
+  background: #fff;
+  box-shadow: inset 0 0 0 1px var(--rule);
+  color: var(--ink);
+  font: inherit;
+  font-size: var(--text-lg);
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  line-height: 1;
+  text-align: left;
+  cursor: pointer;
+}
+
+.cell:hover {
+  background: var(--paper-dim);
+}
+
+/* 고른 시간 = 형광펜으로 칠한 시간 */
+.selected,
+.selected:hover {
+  background: var(--highlighter);
+  box-shadow: none;
+}
+
+/* 예약할 수 없는 시간: 괘선 색 빗금 + 흐린 글자 */
+.cell:disabled {
+  background: repeating-linear-gradient(-45deg, var(--paper), var(--paper) 4px, var(--rule) 4px, var(--rule) 5px);
+  color: var(--pencil);
+  text-decoration: line-through;
+  cursor: not-allowed;
+}

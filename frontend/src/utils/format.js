@@ -7,3 +7,8 @@ export function formatPrice(price) {
 export function toHour(time) {
   return Number(time.slice(0, 2))
 }
+
+// 9 → "09:00"
+export function toTime(hour) {
+  return `${String(hour).padStart(2, '0')}:00`
+}
