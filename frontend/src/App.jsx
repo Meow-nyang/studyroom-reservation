@@ -1,7 +1,9 @@
 import { BrowserRouter, Route, Routes } from 'react-router'
+import { RequireAuth } from './auth/RequireAuth.jsx'
 import { Header } from './components/Header.jsx'
 import { CafeListPage } from './pages/CafeListPage.jsx'
 import { LoginPage } from './pages/LoginPage.jsx'
+import { MyReservationsPage } from './pages/MyReservationsPage.jsx'
 import { NotFoundPage } from './pages/NotFoundPage.jsx'
 import { RoomDetailPage } from './pages/RoomDetailPage.jsx'
 import { RoomListPage } from './pages/RoomListPage.jsx'
@@ -19,6 +21,7 @@ function App() {
           <Route path="/rooms/:roomId" element={<RoomDetailPage />} />
           <Route path="/login" element={<LoginPage />} />
           <Route path="/signup" element={<SignupPage />} />
+          <Route path="/my/reservations" element={<RequireAuth><MyReservationsPage /></RequireAuth>} />
           <Route path="*" element={<NotFoundPage />} />
         </Routes>
       </main>

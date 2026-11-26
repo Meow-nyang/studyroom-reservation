@@ -21,6 +21,7 @@ export function Header() {
         {/* 로그인 여부를 확인하는 동안에는 아무것도 보여 주지 않는다 (깜빡임 방지) */}
         {status === 'authenticated' && (
           <nav className={styles.nav}>
+            <Link to="/my/reservations" className={styles.link}>내 예약</Link>
             <span className={styles.name}>{member.name}님</span>
             <button type="button" className={styles.textButton} onClick={logout}>
               로그아웃

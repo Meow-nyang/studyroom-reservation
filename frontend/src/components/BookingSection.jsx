@@ -33,7 +33,6 @@ export function BookingSection({ room }) {
   const [selection, setSelection] = useState(null)
   const [notice, setNotice] = useState(null)       // 선택이 안 된 이유 (예: 최대 4시간)
   const [error, setError] = useState(null)         // 예약 요청 실패 문구
-  const [reserved, setReserved] = useState(null)   // 방금 만든 예약
   const [submitting, setSubmitting] = useState(false)
 
   const availability = useFetch(`/api/rooms/${room.id}/availability?date=${date}`)
@@ -43,7 +42,6 @@ export function BookingSection({ room }) {
   function clearMessages() {
     setNotice(null)
     setError(null)
-    setReserved(null)
   }
 
   function handleDateChange(nextDate) {
@@ -69,24 +67,22 @@ export function BookingSection({ room }) {
     setSubmitting(true)
     clearMessages()
     try {
-      const reservation = await createReservation({
+      await createReservation({
         roomId: room.id,
         date,
         startTime: toTime(selection.start),
         hours,
       })
-      setReserved(reservation)
-      setSelection(null)
-      availability.reload()
+      // 성공하면 내 예약 화면으로. "예약했어요" 문구를 띄우라고 state로 알려 준다.
+      navigate('/my/reservations', { state: { reserved: true } })
     } catch (err) {
       setError(errorMessage(err))
+      setSubmitting(false)
       // 409: 고르는 사이에 다른 사람이 먼저 예약했다. 선택을 풀고 최신 시간표를 다시 받는다.
       if (err.response?.status === 409) {
         setSelection(null)
         availability.reload()
       }
-    } finally {
-      setSubmitting(false)
     }
   }
 
@@ -131,11 +127,6 @@ export function BookingSection({ room }) {
       )}
 
       {error && <p className={`${form.error} ${styles.message}`} role="alert">{error}</p>}
-      {reserved && (
-        <p className={styles.message} role="status">
-          예약했어요. {monthDay(date)} {reserved.startAt.slice(11)}–{reserved.endAt.slice(11)}
-        </p>
-      )}
     </div>
   )
 }
